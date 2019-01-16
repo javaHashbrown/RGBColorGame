@@ -1,0 +1,151 @@
+html {
+  box-sizing: border-box;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+body {
+  background-color: #232323;
+  padding: 0;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: #2f5c7f;
+}
+h1 {
+  color: white;
+  text-align: center;
+  font-weight: normal;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0.5rem;
+  font-size: 1rem;
+}
+#colorDisplay {
+  font-size: 150%;
+}
+
+.stripe {
+  background-color: white;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#msgDisplay {
+  display: inline-block;
+  width: 40%;
+  text-align: center;
+}
+
+.btn-container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  flex: 1 1 30%;
+}
+
+.btn {
+  border: 0;
+  height: 100%;
+  text-transform: uppercase;
+  background-color: transparent;
+  font-weight: bold;
+  letter-spacing: 3px;
+  outline: none;
+  color: #2f5c7f;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: inherit;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.mode {
+  width: 100%;
+}
+
+@media (hover: hover) {
+  .btn:hover,
+  .btn:active {
+    background-color: #2f5c7f;
+    color: white;
+  }
+}
+.reset {
+  flex: 1 1 30%;
+}
+.selected {
+  background-color: #2f5c7f;
+  color: white;
+}
+
+main {
+  width: 100%;
+  margin: auto;
+}
+#container {
+  display: flex;
+  margin: auto;
+  justify-content: space-between;
+  max-width: 700px;
+  flex-wrap: wrap;
+  margin: 1% auto;
+}
+
+.square {
+  flex: 1 1 30%;
+  padding-bottom: 30%;
+  /* background-color: #2f5c7f; */
+  margin: 1.66%;
+  border-radius: 15%;
+  transition: background-color 0.5s;
+}
+
+@media only screen and (min-width: 768px) {
+  .btn-container {
+    display: flex;
+    height: 100%;
+    flex-direction: row;
+    justify-content: center;
+    flex: 1 1 30%;
+  }
+}
+@media only screen and (min-width: 1440px) {
+  h1 {
+    font-size: 1.5rem;
+    line-height: 1.1;
+  }
+  .stripe {
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  #container {
+    max-width: 800px;
+  }
+}
+@media only screen and (min-width: 2560px) {
+  #container {
+    max-width: 1500px;
+  }
+  h1 {
+    font-size: 4rem;
+  }
+  .stripe {
+    height: 150px;
+    font-size: 2.5rem;
+  }
+}
