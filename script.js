@@ -1,87 +1,152 @@
-const squares = document.querySelectorAll(".square");
-const colorDisplay = document.getElementById("colorDisplay");
-const msgDisplay = document.getElementById("msgDisplay");
-const container = document.getElementById("container");
-const header = document.querySelector("header");
-const resetBtn = document.querySelector(".reset");
-const modeButtons = document.querySelectorAll(".mode");
+var Helper = {
+  genRandomColors(colorCounts) {
+    var colors = [];
+    while (colors.length < colorCounts) {
+      let curColor = this.randomColor();
+      if (!colors.includes(curColor)) {
+        colors.push(curColor);
+      }
+    }
+    return colors;
+  },
+  pickColor(colors) {
+    var idx = Math.floor(Math.random() * colors.length);
+    return colors[idx];
+  },
+  randomColor() {
+    var r = Math.floor(Math.random() * 256);
+    //green channel in RGB 0-255
+    var g = Math.floor(Math.random() * 256);
+    //blue channel in RGB 0-255
+    var b = Math.floor(Math.random() * 256);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+};
 
-container.addEventListener("click", clickSquare);
-resetBtn.addEventListener("click", reset);
-modeButtons.forEach(button => button.addEventListener("click", modeChange));
+var theme = {
+  defaultBgColor: "#232323",
+  defaultHeaderBgColor: "#2F5C7F"
+};
 
-var defaultBgColor = "#232323";
-var colors = [];
-var pickedColor = "";
-var numSquares = 6;
+var gameData = new ColorData();
+var App = UI(gameData);
 
-reset();
+// *****************************
+function UI(data) {
+  var squares;
+  var colorDisplay;
+  var msgDisplay;
+  var container;
+  var header;
+  var resetBtn;
+  var modeButtons;
 
-function reset() {
-  colors = genRandomColors(numSquares);
-  pickedColor = pickColor(colors);
-  squares.forEach((item, index) => {
-    if (colors[index]) {
-      item.style.display = "block";
-      item.style.backgroundColor = colors[index];
+  var publicAPI = {
+    init: initUI,
+    clickSquare: clickSquare,
+    reset: reset,
+    changeMode: changeMode
+  };
+  return publicAPI;
+
+  function initUI() {
+    squares = document.querySelectorAll(".square");
+    colorDisplay = document.getElementById("colorDisplay");
+    msgDisplay = document.getElementById("msgDisplay");
+    container = document.getElementById("container");
+    header = document.querySelector("header");
+    resetBtn = document.querySelector(".reset");
+    modeButtons = document.querySelectorAll(".mode");
+    container.addEventListener("click", clickSquare);
+    resetBtn.addEventListener("click", reset);
+    modeButtons.forEach(button => {
+      button.addEventListener("click", changeMode);
+    });
+
+    reset();
+  }
+
+  function clickSquare(e) {
+    if (e.target == this) return;
+    var curColor = e.target.style.backgroundColor;
+    if (curColor == gameData.getTargetColor()) {
+      msgDisplay.textContent = "Correct!";
+      changeColors(curColor);
+      header.style.backgroundColor = curColor;
+      resetBtn.textContent = "Play Again?";
     } else {
-      // hide squares
-      item.style.display = "none";
+      e.target.style.backgroundColor = theme.defaultBgColor;
+      msgDisplay.textContent = "try again...";
     }
-  });
-  colorDisplay.textContent = pickedColor;
-  msgDisplay.textContent = "";
-  header.style.backgroundColor = "#2F5C7F";
-  resetBtn.textContent = "New Colors";
-}
+  }
 
-function clickSquare(e) {
-  if (e.target == this) return;
-  var curColor = e.target.style.backgroundColor;
-  if (curColor == pickedColor) {
-    msgDisplay.textContent = "Correct!";
-    changeColors(curColor);
-    header.style.backgroundColor = curColor;
-    resetBtn.textContent = "Play Again?";
-  } else {
-    e.target.style.backgroundColor = defaultBgColor;
-    msgDisplay.textContent = "try again...";
+  function reset() {
+    data.init();
+    var colors = data.getColorList();
+    var pickedColor = data.getTargetColor();
+    squares.forEach((item, index) => {
+      if (colors[index]) {
+        item.style.display = "block";
+        item.style.backgroundColor = colors[index];
+      } else {
+        // hide squares
+        item.style.display = "none";
+      }
+    });
+    colorDisplay.textContent = pickedColor;
+    msgDisplay.textContent = "";
+    header.style.backgroundColor = theme.defaultHeaderBgColor;
+    resetBtn.textContent = "New Colors";
+  }
+
+  function changeMode() {
+    modeButtons.forEach(button => button.classList.remove("selected"));
+    this.classList.add("selected");
+    var newMode = Number(this.dataset.key);
+    data.setMode(newMode);
+    reset();
+  }
+
+  function changeColors(targetColor) {
+    squares.forEach(item => (item.style.backgroundColor = targetColor));
   }
 }
 
-function changeColors(color) {
-  squares.forEach(item => (item.style.backgroundColor = color));
+// **************************
+function ColorData(mode = 1, modeTypes = ["easy", "hard"]) {
+  this.modeTypes = modeTypes;
+  this.curMode = mode;
+  this.colorList = [];
+  this.pickedColor = "";
 }
 
-function pickColor(colors) {
-  var idx = Math.floor(Math.random() * colors.length);
-  return colors[idx];
-}
+ColorData.prototype.getMode = function getMode() {
+  return this.modeTypes[this.curMode];
+};
+ColorData.prototype.getModeSetting = function getModeSetting() {
+  return this.getMode() == "easy" ? 3 : 6;
+};
+ColorData.prototype.setMode = function setMode(newMode) {
+  if (!this.modeTypes[newMode]) return;
+  this.curMode = newMode;
+};
 
-function genRandomColors(colorCounts) {
-  var colors = [];
-  while (colors.length < colorCounts) {
-    let curColor = randomColor();
-    if (!colors.includes(curColor)) {
-      colors.push(curColor);
-    }
-  }
-  return colors;
-}
+ColorData.prototype.getColorList = function getColorList() {
+  return this.colorList;
+};
+ColorData.prototype.setColorList = function setColorList() {
+  var numColors = this.getModeSetting();
+  this.colorList = Helper.genRandomColors(numColors);
+};
+ColorData.prototype.setTargetColor = function setTargetColor() {
+  this.pickedColor = Helper.pickColor(this.colorList);
+};
+ColorData.prototype.getTargetColor = function getTargetColor() {
+  return this.pickedColor;
+};
+ColorData.prototype.init = function init() {
+  this.setColorList();
+  this.setTargetColor();
+};
 
-function randomColor() {
-  //red channel in RGB 0-255
-  var r = Math.floor(Math.random() * 256);
-  //green channel in RGB 0-255
-  var g = Math.floor(Math.random() * 256);
-  //blue channel in RGB 0-255
-  var b = Math.floor(Math.random() * 256);
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-function modeChange() {
-  modeButtons.forEach(button => button.classList.remove("selected"));
-  this.classList.add("selected");
-  numSquares = this.textContent == "Easy" ? 3 : 6;
-  reset();
-}
+App.init();
