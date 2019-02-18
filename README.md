@@ -1,5 +1,7 @@
 A simple rgb color guessing game, written with Vanilla JavaScript and other JS libraies.
 
+Master is currently V2.
+
 | Version | Description                    | Branch Name       | JS Code                                                                       |
 | ------- | ------------------------------ | ----------------- | ----------------------------------------------------------------------------- |
 | v1      | spaghetti Vanilla JavaScript   | initial           | [code](https://github.com/javaHashbrown/RGBColorGame/blob/initial/script.js)  |
