@@ -1,4 +1,4 @@
-A simple rgb color guessing game, written with Vanilla JavaScript and other JS libraies.
+A simple rgb color guessing game, written with Vanilla JavaScript and other JS libraries.
 
 Master is currently V2.
 
